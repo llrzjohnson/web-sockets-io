@@ -1,0 +1,18 @@
+{
+  "name": "web-sockets-io",
+  "version": "1.0.0",
+  "description": "Chat application using Socket.io",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "6.2.2"
+  },
+  "author": "Lester Johnson",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
