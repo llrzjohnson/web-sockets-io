@@ -19,6 +19,16 @@ app.use(express.static(publicPath));
 // initiate io to listen for connecting and disconnecting clients (event)
 io.on("connection", socket => {
   console.log("New user connected");
+  socket.emit("newMessage", {
+    from: "Message From Server",
+    text: "Server is active",
+    createdAt: 444
+  });
+
+  socket.on("createMessage", message => {
+    console.log("createMessage", message);
+  });
+
   socket.on("disconnect", () => {
     console.log("User dicsonnected from server");
   });
