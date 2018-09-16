@@ -3,6 +3,8 @@ const path = require("path");
 const socketIO = require("socket.io");
 const http = require("http");
 
+const { generateMessage } = require("./utils/message");
+
 //create path variable
 const publicPath = path.join(__dirname, "../public");
 //setup environment for Heroku or local
@@ -21,26 +23,20 @@ io.on("connection", socket => {
   console.log("New user connected");
 
   //socket.emit from Admin to welcome to the chat app
-  socket.emit("newMessage", {
-    from: "Admin",
-    text: "Welcome to chat app",
-    createdAt: new Date().getTime()
-  });
+  socket.emit(
+    "newMessage",
+    generateMessage("Admin", "Welcome to the chat app")
+  );
 
   //socket.broadcast.emit from Admin to announce joinng chat app
-  socket.broadcast.emit("newMessage", {
-    from: "Admin",
-    text: "New user joined",
-    createdAt: new Date().getTime()
-  });
+  socket.broadcast.emit(
+    "newMessage",
+    generateMessage("Admin", "A new user joined")
+  );
 
   socket.on("createMessage", message => {
     console.log("createMessage", message);
-    io.emit("newMessage", {
-      from: message.from,
-      text: message.text,
-      createdAt: new Date().getTime()
-    });
+    io.emit("newMessage", generateMessage(message.from, message.text));
 
     // socket.broadcast.emit("newMessage", {
     //   from: message.from,
