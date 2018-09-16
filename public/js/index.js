@@ -8,10 +8,6 @@ socket.on("connect", function() {
   });
 });
 
-socket.on("newEmail", function(email) {
-  console.log("New Email", email);
-
-  socket.on("disconnect", function() {
-    console.log("dicsonnected from server");
-  });
+socket.on("disconnect", function() {
+  console.log("dicsonnected from server");
 });
