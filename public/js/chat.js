@@ -1,24 +1,5 @@
 var socket = io();
 
-// scrollToBottom = () => {
-//   //Selectors
-//   let messages = $("#messages");
-//   let newMessage = messages.children("li:last-child");
-//   //Heights
-//   let clientHeight = messages.prop("clientHeight");
-//   let scrollTop = messages.prop("scrollTop");
-//   let scrollHeight = messages.prop("scrollHeight");
-//   let newMessageHeight = newMessage.innerHeight();
-//   let lastMessageHeight = newMessage.prev().innerHeight;
-
-//   if (
-//     clientHeight + scrollTop + newMessageHeight + lastMessageHeight >=
-//     scrollHeight
-//   ) {
-//     console.log("Should Scroll");
-//   }
-// };
-
 scrollToBottom = () => {
   // Selectors
   let messages = $("#messages");
