@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const socketIO = require("socket.io");
 const http = require("http");
+const { isRealString } = require("./utils/validation");
+const { Users } = require("./utils/users");
 
 const { generateMessage, generateLocationMessage } = require("./utils/message");
 
@@ -15,6 +17,9 @@ let app = express();
 let server = http.createServer(app);
 //setup server for web sockets
 let io = socketIO(server);
+
+let users = new Users();
+
 //use middleware publicPath to serve public folder
 app.use(express.static(publicPath));
 
@@ -22,17 +27,36 @@ app.use(express.static(publicPath));
 io.on("connection", socket => {
   console.log("New user connected");
 
-  //socket.emit from Admin to welcome to the chat app
-  socket.emit(
-    "newMessage",
-    generateMessage("Admin", "Welcome to the chat app")
-  );
+  socket.on("join", (params, callback) => {
+    if (!isRealString(params.name) || !isRealString(params.room)) {
+      return callback("A valid name and room name are required.");
+    }
+    socket.join(params.room);
+    users.removeUser(socket.id);
+    users.addUser(socket.id, params.name, params.room);
 
-  //socket.broadcast.emit from Admin to announce joinng chat app
-  socket.broadcast.emit(
-    "newMessage",
-    generateMessage("Admin", "A new user joined")
-  );
+    io.to(params.room).emit("updateUserList", users.getUserList(params.room));
+    //socket.leave
+    //io.emit
+    //socket.broadcast.emit
+    //socket.emit
+
+    //socket.emit from Admin to welcome to the chat app
+    socket.emit(
+      "newMessage",
+      generateMessage("Admin", "Welcome to the chat app")
+    );
+
+    //socket.broadcast.emit from Admin to announce joinng chat app
+    socket.broadcast
+      .to(params.room)
+      .emit(
+        "newMessage",
+        generateMessage("Admin", `${params.name} has joined ${params.room}`)
+      );
+
+    callback();
+  });
 
   socket.on("createMessage", (message, callback) => {
     console.log("createMessage", message);
@@ -48,7 +72,14 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
-    console.log("User dicsonnected from server");
+    let user = users.removeUser(socket.id);
+    if (user) {
+      io.to(user.room).emit("updateUserList", users.getUserList(user.room));
+      io.to(user.room).emit(
+        "newMessage",
+        generateMessage("Admin", `${user.name} has left.`)
+      );
+    }
   });
 });
 
