@@ -46,6 +46,7 @@ socket.on("updateUserList", function(users) {
   $("#users").html(ol);
 });
 
+//Mustache
 socket.on("newMessage", function(message) {
   let formattedTime = moment(message.createdAt).format("h:mm a");
   let template = $("#message-template").html();
@@ -78,7 +79,6 @@ $("#message-form").on("submit", function(e) {
   socket.emit(
     "createMessage",
     {
-      from: "User",
       text: messageTextbox.val()
     },
     function() {
